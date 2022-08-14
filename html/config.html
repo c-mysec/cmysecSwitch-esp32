@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <title>My Switch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="w3.css" />
+  <body>
+    <div class="w3-container w3-blue">
+      <h2>Config</h2>
+    </div>
+    <form class="w3-container">
+      <p>
+        <label>Node Name</label>
+        <input class="w3-input" id="nodeName" type="text" maxlength="15" />
+      </p>
+      <p>
+        <label>Node User Name</label>
+        <input class="w3-input" id="nodeUserName" type="text" maxlength="15" />
+      </p>
+      <p>
+        <label>Node User Password</label>
+        <input class="w3-input" id="nodePasswd" type="text" maxlength="15" />
+      </p>
+      <div class="w3-card">
+        <p>
+          <label>Iot Name</label>
+          <input class="w3-input" id="iotName" type="text" maxlength="31" />
+        </p>
+        <p>
+          <label>Email</label>
+          <input class="w3-input" id="email" type="text" maxlength="63" />
+        </p>
+        <p>
+          <label>Iot Password</label>
+          <input class="w3-input" id="iotPasswd" type="text" maxlength="31" />
+        </p>
+        <p>
+          <label>Iot endpoint</label>
+          <input class="w3-input" id="iotEndpoint" type="text" maxlength="127" value="a2g89lg5mw80c9-ats.iot.us-east-1.amazonaws.com" />
+        </p>
+        <p>
+          <label>Iot out topic</label>
+          <input class="w3-input" id="iotOutTopic" type="text" maxlength="127" value="$aws/rules/MySwitchStatusChangeMySwitchStatusChangeIoTRule_uxqN0kOhCUf9"/>
+        </p>
+        </div>
+    </form>
+    <div class="w3-row-padding">
+      <div class="w3-col m6">
+        <button class="w3-button w3-block w3-blue" onclick="location.href='/'">Home</button>
+      </div>
+      <div class="w3-col m6">
+        <button class="w3-button w3-block w3-indigo" onclick="saveConfig()">Save</button>
+      </div>
+    </div>
+  
+    <p>
+      <small>v1.0.1</small> - <small>fv<span id="fv"></span></small>
+
+      <script src="toast.min.js"></script>
+      <script src="functions.js"></script>
+      <script>
+        window.onload = function () {
+          getConfig();
+          gei("fv").innerHTML = fver;
+        };
+        function parseConfig(arrayBuffer) {
+          let obj = {};
+          obj.nodeName = "";
+          obj.nodeUserName = "";
+          obj.nodePasswd = "";
+          if (arrayBuffer) {
+            let byteArray = new Uint8Array(arrayBuffer);
+            if (byteArray.byteLength == 52) {
+              //uint32_t version
+              let pos = 4;
+              obj.nodeName = getString(byteArray, pos, 15); pos += 16;
+              obj.nodeUserName = getString(byteArray, pos, 15); pos += 16;
+              obj.nodePasswd = getString(byteArray, pos, 15); pos += 16;
+            }
+          }
+          console.log(obj);
+          return obj;
+        }
+        function parseCloudConfig(arrayBuffer) {
+          let obj = {};
+          obj.iotName = "";
+          obj.iotPasswd = "";
+          obj.iotEndpoint = "";
+          obj.iotOutTopic = "";
+          obj.email = "";
+          if (arrayBuffer) {
+            let byteArray = new Uint8Array(arrayBuffer);
+            if (byteArray.byteLength >= 324) {
+              //uint32_t version
+              let pos = 4;
+              obj.iotName = getString(byteArray, pos, 31); pos += 32;
+              obj.iotPasswd = getString(byteArray, pos, 31); pos += 32;
+              let iotEndpoint = getString(byteArray, pos, 127); pos += 128;
+              if (iotEndpoint && iotEndpoint.length > 0) {
+                obj.iotEndpoint = iotEndpoint;
+              }
+              let topic = getString(byteArray, pos, 127); pos += 128;
+              if (topic && topic.length > 0) {
+                obj.iotOutTopic = topic;
+              }
+            }
+            if (byteArray.byteLength == 388) {
+              obj.email = getString(byteArray, pos, 63); pos += 64;
+            }
+          }
+          console.log(obj);
+          return obj;
+        }
+        function getConfig() {
+          call("config.dat",null,null,null, null, function (arrayBuffer) {
+            let obj = parseConfig(arrayBuffer);
+            if (obj.nodeName.length > 0) {
+              sval("nodeName",obj.nodeName);
+              sval("nodeUserName",obj.nodeUserName);
+              sval("nodePasswd",obj.nodePasswd);
+              sval("email",obj.email);
+              call("cloud.dat",null,null,null, null, function (arrayBuffer) {
+                let obj = parseCloudConfig(arrayBuffer);
+                if (obj.iotName.length > 0) {
+                  sval("iotName",obj.iotName);
+                  sval("iotPasswd",obj.iotPasswd);
+                  if (obj.iotEndpoint && obj.iotEndpoint.length > 0) sval("iotEndpoint",obj.iotEndpoint);
+                  if (obj.iotOutTopic && obj.iotOutTopic.length > 0) sval("iotOutTopic", obj.iotOutTopic);
+                }
+              }, true);
+            }
+          }, true);
+        }
+        function saveConfig() {
+          let byteArray = [];
+          let pos = 4;
+          byteArray[0] = 1;
+          byteArray[1] = byteArray[2] = byteArray[3] = 0;
+          fromString(byteArray, pos, 16, gval("nodeName")); pos += 16;
+          fromString(byteArray, pos, 16, gval("nodeUserName")); pos += 16;
+          fromString(byteArray, pos, 16, gval("nodePasswd")); pos += 16;
+          uploadFileBin(byteArray, "config.dat");
+          byteArray = [];
+          pos = 4;
+          byteArray[0] = 1;
+          byteArray[1] = byteArray[2] = byteArray[3] = 0;
+          fromString(byteArray, pos, 32, gval("iotName")); pos += 32;
+          fromString(byteArray, pos, 32, gval("iotPasswd")); pos += 32;
+          fromString(byteArray, pos, 128, gval("iotEndpoint")); pos += 128;
+          fromString(byteArray, pos, 128, gval("iotOutTopic")); pos += 128;
+          fromString(byteArray, pos, 64, gval("email")); pos += 64;
+          uploadFileBin(byteArray, "cloud.dat");
+        }
+      </script>
+    </p>
+    <a id="dblob">download</a>
+  </body>
+</html>

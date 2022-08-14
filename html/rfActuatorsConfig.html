@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<title>RF Devices config</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<body>
+<div class="w3-container w3-blue">
+  <h2>RF Actuators config<span class="material-icons" style="float:right;cursor: pointer" onclick="location.href='/'">home</span></h2>
+</div>
+<form class="w3-container">
+	<br>
+	<div id="par">
+		<div class="w3-card w3-border-blue w3-leftbar w3-margin w3-light-grey" id="template0">
+			<div class="w3-row-padding">
+			<div class="w3-col m4 l4">
+			  <label>Name</label>
+			  <input class="w3-input" id="name0" type="text" maxlength="16" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m3 l3">
+				<label>Type</label>
+				<select class="w3-select" id="type0" onchange="changeType(this)">
+					<option value="1">Toggle+Latch</option>
+					<option value="2">Toggle</option>
+				</select>
+			</div>
+			<div class="w3-col m2 l2">
+			  <label>Proto</label>
+			  <input class="w3-input" id="proto0" type="number" max="32" min="0" value="1" oninput="limitLen(this, 2)" onkeypress="return onlyNums(event)" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m2 l2">
+			  <label>BitLen</label>
+			  <input class="w3-input" id="bitlen0" type="number" max="32" min="0" value="24" oninput="limitLen(this, 2)" onkeypress="return onlyNums(event)" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m1 l1">
+				<span class="clone material-icons" style="cursor: pointer" id= "clear0" onclick="clearFields(this.parentElement.parentElement)">clear</span>
+			</div>
+		  </div>
+		  <div class="w3-row-padding" style="margin-top:5px">
+			<div class="w3-col w3-container w3-border" style="width:12%">
+				<label id="labl0_0">Code 0</label>
+				<input class="w3-input" id="code0_0" type="number" max="16777215" min="0" oninput="limitLen(this, 8)" onkeypress="return onlyNums(event)" onchange="validaDev(this)">
+				<span class="clone material-icons" style="cursor: pointer" id= "getLastCodeReceived0_0" onclick="getReceived(this.id.substr(19,1), this.id.substr(21,1), this)" alt="Get ">autorenew</span>
+				<span class="clone material-icons" style="cursor: pointer" id="play0_0" onclick="play(this.id.substr(4,1), this.id.substr(6,1))">play_arrow</span>
+				<span class="clone material-icons" style="cursor: pointer" id="new0_0" onclick="makeNewCode(this.id.substr(3,1), this.id.substr(5,1))">switch_access_shortcut</span>
+			</div>
+		  </div>
+		</div>
+	</div>
+</form>
+<div class="w3-row-padding">
+  <div class="w3-col m6">
+    <button class="w3-button w3-block w3-blue" onclick="location.href='/'">Home</button>
+  </div>
+  <div class="w3-col m6">
+    <button class="w3-button w3-block w3-indigo" onclick="saveDevices()">Save</button>
+  </div>
+</div>
+<script src="toast.min.js"></script>
+<script src="functions.js"></script>
+<script>
+function getReceived(ord, index, el) {
+	call("getLastRfDetected",null,null,null, function (text) {
+		let p = text.split(';');
+		if (p.length > 2) {
+			sval("code" + ord + "_" + index, p[0]);
+			sval("bitlen" + index, p[1]);
+			sval("proto" + index, p[2]);
+			validaDev(el);
+		}
+	});
+}
+function play(ord, index) {
+	let code = gei("code"+ord +"_"+index);
+	let bit = gei("bitlen"+index);
+	let proto = gei("proto"+index);
+	if (!(hasValue(code) && hasValue(bit) && hasValue(proto))) {
+		var toast = new iqwerty.toast.Toast();
+		toast.setText('Code, protocol and bitlen must have value').show();
+		return;
+	}
+	let args = "?code=" + code.value + "&bitlen=" + bit.value + "&protocol=" + proto.value;
+	call("sendRfTest" + args,null,null,null, function (text) {
+		console.log(text);
+	});
+}
+function showHideCodeParent(ord, index, show) {
+	let p = gei("code"+index+"_"+ord).parentElement;
+	p.style.display = show ? "block" : "none";
+}
+function setButtonLabel(ord, index, label) {
+	let el = gei("labl"+index+"_"+ord);
+	el.innerHTML = label;
+}
+function changeType(el) {
+	ord = el.id.substr(4,1);
+	showHideCodeParent(ord, 0, true);
+	for (let i = 1; i < 8; i++) showHideCodeParent(ord, i, false); // show only first
+	if (el.value == 2) {
+		setButtonLabel(ord, 0, 'Toggle');
+	} else if (el.value == 1) { // toggle+latch
+		showHideCodeParent(ord, 1, true);
+		showHideCodeParent(ord, 2, true);
+		setButtonLabel(ord, 0, 'Off');
+		setButtonLabel(ord, 1, 'On');
+		setButtonLabel(ord, 2, 'Toggle');
+	}
+}
+var baseCode = 0b100000011110010000000000;
+var lastCode = 0b100000011110010001110011;
+function makeNewCode(ord, index) {
+	sval("code" + ord + "_" + index, ++lastCode);
+}
+function getInt32b(array, s) {
+	let r = getInt32(array, s);
+	if ((r | baseCode == r) && (r > lastCode)) {
+		lastCode = baseCode;
+	}
+	return r == 0 ? "" : r;
+}
+function validaDev(el) {
+	let par = el.parentElement.parentElement.parentElement;
+	let val = Number(el.value);
+	if ((val > 0) && (val | baseCode == val) && (val > lastCode)) lastCode = val;
+	let index = par.id.substr(8); // template0
+    let nameNode = par.querySelector('#name'+index);
+    let code0Node = par.querySelector('#code0_'+index);
+    let code1Node = par.querySelector('#code1_'+index);
+    let code2Node = par.querySelector('#code2_'+index);
+    let code3Node = par.querySelector('#code3_'+index);
+    let code4Node = par.querySelector('#code4_'+index);
+    let code5Node = par.querySelector('#code5_'+index);
+    let code6Node = par.querySelector('#code6_'+index);
+    let code7Node = par.querySelector('#code7_'+index);
+    let protoNode = par.querySelector('#proto'+index);
+    let bitlenNode = par.querySelector('#bitlen'+index);
+	if (hasValue(nameNode)) {
+		if (hasValue(code0Node) &&
+		(!hasValue(code2Node) || hasValue(code1Node)) && 
+		(!hasValue(code3Node) || (hasValue(code2Node))) && 
+		(!hasValue(code4Node) || (hasValue(code3Node))) && 
+		(!hasValue(code5Node) || (hasValue(code4Node))) && 
+		(!hasValue(code6Node) || (hasValue(code5Node))) && 
+		(!hasValue(code7Node) || (hasValue(code6Node))) && 
+		hasValue(protoNode) && hasValue(bitlenNode)) {
+			par.style.background = '#8f9';
+		} else {
+			par.style.background = '#F88';
+		}
+	} else {
+		par.style.background = '#fff';
+	}
+}
+function saveDevices() {
+	let byteArray = [];
+	let pos = 4;
+	byteArray[0] = 1;
+	byteArray[1] = byteArray[2] = byteArray[3] = 0;
+	for (let i=0;i<64*56;i++) byteArray[pos + i] = 0;
+    for (let num = 0; num < 64; num++) {
+		// 56 é o tamanho do registro
+		// uint8_t type;
+		 	// 1 - RF Toggle & Latch -> Codes: 0=off, 1=on, 2=toggle
+			// 2 - RF Toggle -> Codes: 0=toggle
+			// 5 - Udp
+		byteArray[pos++] = gval("type"+num);
+		// uint8_t filler1; uint8_t filler2; uint8_t filler3;
+		pos += 3;
+		// char actuatorName[MAX_NAME_LEN];
+		fromString(byteArray, pos, 16, gval("name"+num)); pos += 16;
+		//uint32_t code[MAX_RF_ACTUATOR_CODES]; // 0 - não configurado
+		let numStates = 0; let temp = pos;
+		if (hasValue("code0_"+num)) {
+			fromInt32(byteArray, pos, "code0_"+num); numStates++; pos +=4;
+			if (hasValue("code1_"+num)) { fromInt32(byteArray, pos, "code1_"+num); numStates++; pos +=4;
+				if (hasValue("code2_"+num)) { fromInt32(byteArray, pos, "code2_"+num); numStates++; pos +=4;
+					if (hasValue("code3_"+num)) { fromInt32(byteArray, pos, "code3_"+num); numStates++; pos +=4;
+						if (hasValue("code4_"+num)) { fromInt32(byteArray, pos, "code4_"+num); numStates++; pos +=4;
+							if (hasValue("code5_"+num)) { fromInt32(byteArray, pos, "code5_"+num); numStates++; pos +=4;
+								if (hasValue("code6_"+num)) { fromInt32(byteArray, pos, "code6_"+num); numStates++; pos +=4;
+									if (hasValue("code7_"+num)) { fromInt32(byteArray, pos, "code7_"+num); numStates++; }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		pos = temp + 32;
+		//uint8_t protocol;
+		byteArray[pos++] = Number(gval("proto"+num));
+		//uint8_t bitlen;
+		byteArray[pos++] = Number(gval("bitlen"+num));
+		// uint8_t estadoAtual; // estados 0 a 7 enviam code, estados reservados: 255: prox 254: não muda
+		pos++;
+		// uint8_t numStates;
+		byteArray[pos++] = numStates;
+	}
+	uploadFileBin(byteArray, "ConfigAtuador.dat", "reloadRfDevicesConfig");
+}
+function getDevConfig() {
+	call("ConfigAtuador.dat",null,null,null, null, function (arrayBuffer) {
+		let byteArray = new Uint8Array(arrayBuffer);
+		if (byteArray.byteLength < 64 * 56 + 4 &&
+			byteArray[0] != 1) return;
+		let pos = 4;
+		for (let ind = 0; ind < 64; ind++) {
+
+			// 56 é o tamanho do registro
+			// uint8_t type;
+				// 1 - RF Toggle & Latch -> Codes: 0=off, 1=on, 2=toggle
+				// 2 - RF Toggle -> Codes: 0=toggle
+				// 5 - Udp
+			sval("type"+ind, byteArray[pos++]);
+			// uint8_t filler1; uint8_t filler2; uint8_t filler3;
+			pos += 3;
+
+			if (getString(byteArray, pos, 16).length > 0) {
+				// char actuatorName[MAX_NAME_LEN];
+				sval("name" + ind, getString(byteArray, pos, 16)); pos += 16;
+				//uint32_t code[MAX_RF_ACTUATOR_CODES]; // 0 - não configurado
+				for (let ord = 0; ord < 8; ord++) {
+					sval("code"+ord+"_"+ind, getInt32b(byteArray, pos)); pos += 4;
+				}
+				//uint8_t protocol;
+				sval("proto"+ind, byteArray[pos++]);
+				//uint8_t bitlen;
+				sval("bitlen"+ind, byteArray[pos++]);
+				// uint8_t estadoAtual; // estados 0 a 7 enviam code, estados reservados: 255: prox 254: não muda
+				pos++;
+				// uint8_t numStates;
+				pos++;
+			} else {
+				sval("name"+ind, "");
+				for (let ord = 0; ord < 8; ord++) {
+					sval("code"+ord+"_"+ind, "");
+				}
+				sval("proto"+ind, "1");
+				sval("bitlen"+ind, "24"); pos += 52;
+			}
+			changeType(gei("type"+ind));
+		}
+	}, true);
+}
+window.onload=function(){
+	let actionNode = gei("labl0_0").parentElement;
+	for (let i = 1; i < 8; i++) {
+		let clone = actionNode.cloneNode(true);
+		clone.querySelector("#labl0_0").id = "labl"+i+"_0";
+		clone.querySelector("#code0_0").id = "code"+i+"_0";
+		clone.querySelector("#getLastCodeReceived0_0").id = "getLastCodeReceived"+i+"_0";
+		clone.querySelector("#play0_0").id = "play"+i+"_0";
+		clone.querySelector("#new0_0").id = "new"+i+"_0";
+		actionNode.parentElement.appendChild(clone);
+	}
+	for (let i = 1; i< 64; i++) {
+		copyDiv("par", "template0", i, "template");
+	}
+	getDevConfig();
+};
+</script>
+<a id="dblob">download</a>
+</body>
+</html> 

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<title>RF Controls config</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<body>
+<div class="w3-container w3-blue">
+  <h2>RF Controls config<span class="material-icons" style="float:right;cursor: pointer" onclick="location.href='/'">home</span></h2>
+</div>
+<form class="w3-container">
+	<br>
+	<div id="par">
+		<div class="w3-card w3-border-blue w3-leftbar w3-margin w3-light-grey" id="template0">
+			<div class="w3-row-padding">
+			<div class="w3-col m4 l4">
+			  <label>Name</label>
+			  <input class="w3-input" id="name0" type="text" maxlength="16" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m3 l2">
+			  <label>Code</label>
+				<span class="clone material-icons" style="cursor: pointer" id= "getLastCodeReceived0" onclick="getReceived(this.id.substr(19))">autorenew</span>
+			  <input class="w3-input" id="code0" type="number" max="16777215" min="0" oninput="limitLen(this, 8)" onkeypress="return onlyNums(event)" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m1 l1">
+			  <label>Proto</label>
+			  <input class="w3-input" id="proto0" type="number" max="32" min="0" value="1" oninput="limitLen(this, 2)" onkeypress="return onlyNums(event)" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m1 l1">
+			  <label>BitLen</label>
+			  <input class="w3-input" id="bitlen0" type="number" max="32" min="0" value="24" oninput="limitLen(this, 2)" onkeypress="return onlyNums(event)" onchange="validaDev(this)">
+			</div>
+			<div class="w3-col m2 l3">
+				<span class="clone material-icons" style="cursor: pointer" id="clear0" onclick="clearFields(this.parentElement.parentElement)">clear</span>
+				<span class="clone material-icons" style="cursor: pointer" id="play0" onclick="play(this.id.substr(4))">play_arrow</span>
+				<span class="clone material-icons" style="cursor: pointer" id="exec0" onclick="exec(this.id.substr(4))">directions_run</span>
+			</div>
+			</div>
+
+			<div class="w3-row-padding" style="margin-top:5px">
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 0 <input type="checkbox" id="flg0_0"></div>
+					<select class="w3-select" id="act0_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st0_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 1 <input type="checkbox" id="flg1_0"></div>
+					<select class="w3-select" id="act1_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st1_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 2 <input type="checkbox" id="flg2_0"></div>
+					<select class="w3-select" id="act2_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st2_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 3 <input type="checkbox" id="flg3_0"></div>
+					<select class="w3-select" id="act3_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st3_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 4 <input type="checkbox" id="flg4_0"></div>
+					<select class="w3-select" id="act4_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st4_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 5 <input type="checkbox" id="flg5_0"></div>
+					<select class="w3-select" id="act5_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st5_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 6 <input type="checkbox" id="flg6_0"></div>
+					<select class="w3-select" id="act6_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st6_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 7 <input type="checkbox" id="flg7_0"></div>
+					<select class="w3-select" id="act7_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st7_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+			</div>
+
+
+			<div class="w3-row-padding" style="margin-top:5px">
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 8 <input type="checkbox" id="flg8_0"></div>
+					<select class="w3-select" id="act8_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st8_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 9 <input type="checkbox" id="flg9_0"></div>
+					<select class="w3-select" id="act9_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st9_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 10 <input type="checkbox" id="flg10_0"></div>
+					<select class="w3-select" id="act10_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st10_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 11 <input type="checkbox" id="flg11_0"></div>
+					<select class="w3-select" id="act11_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st11_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 12 <input type="checkbox" id="flg12_0"></div>
+					<select class="w3-select" id="act12_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st12_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 13 <input type="checkbox" id="flg13_0"></div>
+					<select class="w3-select" id="act13_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st13_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 14 <input type="checkbox" id="flg14_0"></div>
+					<select class="w3-select" id="act14_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st14_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+				<div class="w3-col w3-container w3-border" style="width:12%">
+					<div>Atuador 15 <input type="checkbox" id="flg15_0"></div>
+					<select class="w3-select" id="act15_0" onchange="genOptions(this);validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+					<select class="w3-select" id="st15_0" onchange="validaDev(this)">
+						<option value="255" selected>-</option>
+					</select>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</form>
+<div class="w3-row-padding">
+  <div class="w3-col m6">
+    <button class="w3-button w3-block w3-blue" onclick="location.href='/'">Home</button>
+  </div>
+  <div class="w3-col m6">
+    <button class="w3-button w3-block w3-indigo" onclick="saveControls()">Save</button>
+  </div>
+</div>
+<script src="toast.min.js"></script>
+<script src="functions.js"></script>
+<script>
+function getReceived(index) {
+	call("getLastRfDetected",null,null,null, function (text) {
+		let p = text.split(';');
+		if (p.length > 2) {
+			sval("code" + index, p[0]);
+			sval("bitlen" + index, p[1]);
+			sval("proto" + index, p[2]);
+		}
+	});
+}
+function play(index) {
+	let code = gei("code"+index);
+	let bit = gei("bitlen"+index);
+	let proto = gei("proto"+index);
+	if (!(hasValue(code) && hasValue(bit) && hasValue(proto))) {
+		var toast = new iqwerty.toast.Toast();
+		toast.setText('Code, protocol and bitlen must have value').show();
+		return;
+	}
+	let args = "?code=" + code.value + "&bitlen=" + bit.value + "&protocol=" + proto.value;
+	call("sendRfTest" + args,null,null,null, function (text) {
+		console.log(text);
+	});
+}
+function exec(index) {
+	let toast = new iqwerty.toast.Toast();
+	toast.setText('Device will send only SAVED config.').show();
+	let args = "?button=" + index;
+	call("simulateButton" + args,null,null,null, function (text) {
+		let toast2 = new iqwerty.toast.Toast();
+		toast2.setText(text).show();
+		console.log(text);
+	});
+}
+function validaDev(el) {
+	let par = el.parentElement.parentElement.parentElement;
+	let index = par.id.substr(8); // template0
+    let nameNode = par.querySelector('#name'+index);
+    let codeNode = par.querySelector('#code'+index);
+    let protoNode = par.querySelector('#proto'+index);
+    let bitlenNode = par.querySelector('#bitlen'+index);
+
+	if (hasValue(nameNode)) {
+		if (hasValue(codeNode) && hasValue(protoNode) && hasValue(bitlenNode)) {
+			par.style.background = '#8f9';
+		} else {
+			par.style.background = '#F88';
+		}
+	} else {
+		par.style.background = '#fff';
+	}
+}
+function saveControls() {
+	let byteArray = [];
+	let pos = 4;
+	byteArray[0] = 1;
+	byteArray[1] = byteArray[2] = byteArray[3] = 0;
+    for (let num = 0; num < 128; num++) {
+		// 44 é o tamanho do registro
+		for (let i=0;i<76;i++) byteArray[pos + i] = 0;
+		// uint8_t type; // 1 - RF, 5 - Udp #define TYPE_RF 1 #define TYPE_UDP 2
+		byteArray[pos++] = 1;
+		// uint8_t filler1;
+		// uint8_t filler2;
+		// uint8_t filler3;
+		pos += 3;
+		// char buttonName[MAX_NAME_LEN];
+		fromString(byteArray, pos, 16, gval("name"+num)); pos += 16;
+		// #define NOT_CONFIGURED 255
+		// uint8_t actuator[MAX_BUTTON_ACTUATORS]; // # sequencia do atuador - NOT_CONFIGURED: inexistente
+		//uint8_t valor[MAX_BUTTON_ACTUATORS]; // estado atuador. Se valor == NOT_CONFIGURED, não altera o estado,
+		for (let i=0;i<16;i++) {
+			byteArray[pos++] = Number(gval("act" + i + "_" + num));
+		}
+		for (let i=0;i<16;i++) {
+			byteArray[pos++] = Number(gval("st" + i + "_" + num));
+		}
+		for (let i=0;i<16;i++) {
+			byteArray[pos++] = gei("flg" + i + "_" + num).checked ? 1 : 0;
+		}
+		//uint32_t code; // 0 - não configurado
+		fromInt32(byteArray, pos, "code"+num); pos +=4;
+		//uint8_t protocol;
+		byteArray[pos++] = Number(gval("proto"+num));
+		//uint8_t bitlen;
+		byteArray[pos++] = Number(gval("bitlen"+num));
+		//uint8_t filler1;
+		//uint8_t filler2;*/
+		pos += 2;
+	}
+	uploadFileBin(byteArray, "ConfigButton.dat", "reloadRfDevicesConfig");
+}
+let optionsType1 = [];
+optionsType1[0] = document.createElement("option");
+optionsType1[1] = document.createElement("option");
+optionsType1[2] = document.createElement("option");
+optionsType1[0].text = "off";
+optionsType1[1].text = "on";
+optionsType1[2].text = "toggle";
+optionsType1[0].value = 0;
+optionsType1[1].value = 1;
+optionsType1[2].value = 2;
+let optionsType2 = [];
+optionsType2[0] = document.createElement("option");
+optionsType2[0].text = "toggle";
+optionsType2[0].value = 0;
+
+function genOptions(sel) {
+	let act = sel.value;
+	let sufix = sel.id.substr(3);
+	let selSt = sel.parentElement.querySelector('#st'+sufix);
+	selSt.options.length = 1;
+	if (act != 255 && act != '') {
+		for (let x = 0; x < actuators[act].options.length; x++) {
+			selSt.add(actuators[act].options[x].cloneNode(true));
+		}
+	}
+}
+function getCtlConfig(actuators) {
+	call("ConfigButton.dat",null,null,null, null, function (arrayBuffer) {
+		let byteArray = new Uint8Array(arrayBuffer);
+		if (byteArray.byteLength < 128 * 76 + 4 &&
+			byteArray[0] != 1) {
+				for (let ind = 0; ind < 128; ind++) {
+					for (let i=0;i<16;i++) { // config atuadores e valores de atuadores
+						sval("act" + i + "_" + ind, 255);//byteArray[pos + (i*2)]);
+					}
+					for (let i=0;i<16;i++) { // config atuadores e valores de atuadores
+						sval("st" + i + "_" + ind, 255);//byteArray[pos + (i*2)]);
+					}
+					for (let i=0;i<16;i++) { // config atuadores e valores de atuadores
+						sval("flg" + i + "_" + ind, 255);//byteArray[pos + (i*2)]);
+					}
+				}
+				return;
+			}
+		let pos = 4;
+		for (let ind = 0; ind < 128; ind++) {
+			if (getString(byteArray, pos, 16).length > 0) {
+				pos += 4; // type e 3 fillers
+				sval("name" + ind, getString(byteArray, pos, 16)); pos += 16;
+				for (let i=0;i<16;i++) { // config atuadores e valores de atuadores
+					sval("act" + i + "_" + ind, Number(byteArray[pos++]));
+					genOptions(gei("act" + i + "_" + ind));
+				}
+				for (let i=0;i<16;i++) { // config atuadores e valores de atuadores
+					sval("st" + i + "_" + ind, Number(byteArray[pos++]));
+				}
+				for (let i=0;i<16;i++) { // config atuadores e valores de atuadores
+					gei("flg" + i + "_" + ind).checked = (Number(byteArray[pos++]) & 1) == 1;
+				}
+				let code = getInt32(byteArray, pos);
+				if (code != 0) sval("code"+ind, code);
+				pos += 4;
+				sval("proto"+ind, Number(byteArray[pos++]));
+				sval("bitlen"+ind, Number(byteArray[pos++]));
+				pos += 2; // 2 fillers
+			} else {
+				sval("name"+ind, "");
+				sval("code"+ind, "");
+				sval("proto"+ind, "1");
+				sval("bitlen"+ind, "24");
+				pos += 76;
+			}
+		}
+	}, true);
+}
+let actuators = [];
+window.onload=function(){
+	call("ConfigAtuador.dat",null,null,null, null, function (arrayBuffer) {
+		let byteArray = new Uint8Array(arrayBuffer);
+		if (byteArray.byteLength < 128 * 56 + 4 &&
+			byteArray[0] != 1) return;
+		let pos = 4;
+		for (let ind = 0; ind < 128; ind++) {
+			// 56 é o tamanho do registro
+			let type = byteArray[pos];
+			pos += 4;
+			if (getString(byteArray, pos, 16).length > 0) {
+				// char actuatorName[MAX_NAME_LEN];
+				actuators.push({
+					type : type,
+					options: (type == 1) ? optionsType1 : optionsType2,
+					name : getString(byteArray, pos, 16)
+				});
+			}
+			pos += 52;
+		}
+		for (let i=0;i<8;i++) { // config atuadores e valores de atuadores
+			let sel = gei("act" + i + "_" + 0);
+			for (let x = 0; x < actuators.length; x++) {
+				var option = document.createElement("option");
+				option.text = actuators[x].name;
+				option.value = x;
+				sel.add(option);
+			}
+		}
+		for (let i = 1; i< 128; i++) {
+			copyDiv("par", "template0", i, "template", null, "index");
+		}
+		getCtlConfig(actuators);
+	}, true);
+}
+</script>
+<a id="dblob">download</a>
+</body>
+</html> 

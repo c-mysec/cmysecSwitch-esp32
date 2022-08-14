@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<title>My Switch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link rel="stylesheet" href="toggle-switchy.css">
+<body>
+<div class="w3-container w3-blue">
+  <h2>Relays</h2>
+</div>
+<form class="w3-container">
+  <p>
+<label for="relay0" id="llrelay0"></label>
+<label for="relay0" class="toggle-switchy" id="lrelay0">
+	<input checked type="checkbox" id="relay0" onclick="toggleR(this, 0)">
+	<span class="toggle">
+		<span class="switch"></span>
+	</span>
+</label>
+</p>
+<p>
+<label for="relay1" id="llrelay1"></label>
+<label for="relay1" class="toggle-switchy" id="lrelay1">
+	<input checked type="checkbox" id="relay1" onclick="toggleR(this, 1)">
+	<span class="toggle">
+		<span class="switch"></span>
+	</span>
+</label>
+</p>
+<p>
+<label for="relay2" id="llrelay2"></label>
+<label for="relay2" class="toggle-switchy" id="lrelay2">
+	<input checked type="checkbox" id="relay2" onclick="toggleR(this, 2)">
+	<span class="toggle">
+		<span class="switch"></span>
+	</span>
+</label>
+</p>
+</form>
+<a href="/">home</a>
+<script src="functions.js"></script>
+<script>
+window.onload=function(){
+  getRelays("");
+};
+</script>
+</body>
+</html> 

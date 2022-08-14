@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<title>RF Groups config</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<body>
+
+<div class="w3-container w3-blue">
+  <h2>RF Groups config</h2>
+</div>
+<form class="w3-container">
+	<br>
+	<div id="par">
+		<div class="w3-card-4 w3-section" id="template0" data-groupid="0">
+			<label>Group</label>
+			<div class="w3-row">
+				<div class="w3-col m8 l8">
+					<input class="w3-input" id="name0" type="text" maxlength="16" >
+				</div>
+				<div class="w3-col m4 l4">
+					<div class="w3-dropdown-hover w3-right">
+						<button type="button" class="w3-tag w3-round w3-green">On <span class="material-icons">add_circle_outline</span></button>
+						<div class="addDevicesOn w3-dropdown-content w3-bar-block w3-border" style="right:0">
+						</div>
+					</div>
+					<div class="w3-dropdown-hover w3-right">
+						<button type="button" class="w3-tag w3-round w3-yellow">Off <span class="material-icons">add_circle_outline</span></button>
+						<div class="addDevicesOff w3-dropdown-content w3-bar-block w3-border" style="right:0">
+						</div>
+					</div>
+					<div class="w3-dropdown-hover w3-right">
+						<button type="button" class="w3-tag w3-round w3-blue">Toggle <span class="material-icons">add_circle_outline</span></button>
+						<div class="addDevicesToggle w3-dropdown-content w3-bar-block w3-border" style="right:0">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="deviceList">
+			</div>
+		</div>
+	</div>
+</form>
+<div class="w3-row-padding">
+  <div class="w3-col m6">
+    <button class="w3-button w3-block w3-blue" onclick="location.href='/'">Home</button>
+  </div>
+  <div class="w3-col m6">
+    <button class="w3-button w3-block w3-indigo" onclick="saveDevGroupsConfig()">Save</button>
+  </div>
+</div>
+<script src="toast.min.js"></script>
+<script src="functions.js"></script>
+<script>
+function validaDev(el) {
+	let par = el.parentElement.parentElement;
+	let index = par.id.substr(8); // template0
+    let nameNode = par.querySelector('#name'+index);
+    let codeOnNode = par.querySelector('#codeOn'+index);
+    let codeOffNode = par.querySelector('#codeOff'+index);
+    let protoNode = par.querySelector('#proto'+index);
+    let bitlenNode = par.querySelector('#bitlen'+index);
+    let groupsNode = par.querySelector('#groups'+index);
+	if (hasValue(nameNode)) {
+		if (hasValue(codeOnNode) && hasValue(codeOffNode) && hasValue(protoNode) && hasValue(bitlenNode) && groupsOk) {
+			par.style.background = '#8f9';
+		} else {
+			par.style.background = '#F88';
+		}
+	} else {
+		par.style.background = '#fff';
+	}
+}
+let groups = [];
+let devices = [];
+function getDevConfig() {
+	call("rfdevices.dat",null,null,null, null, function (arrayBuffer) {
+		let byteArray = new Uint8Array(arrayBuffer);
+		if (byteArray.byteLength < 50 * 28 + 4 &&
+			byteArray[0] != 1) return;
+		let pos = 4;
+		let comboOn = document.querySelector(".addDevicesOn"); comboOn.innerHTML = '';
+		let comboOff = document.querySelector(".addDevicesOff"); comboOff.innerHTML = '';
+		let comboToggle = document.querySelector(".addDevicesToggle"); comboToggle.innerHTML = '';
+		for (let ind = 0; ind < 50; ind++) {
+			if (getString(byteArray, pos, 16).length > 0) {
+				let a = document.createElement('a');
+				a.dataset.device = ind;
+				a.dataset.deviceName = getString(byteArray, pos, 16);
+				a.className = "w3-bar-item w3-button addDeviceOffLinkClass";
+				a.href="#";
+				a.innerHTML = getString(byteArray, pos, 16);
+				comboOff.appendChild(a);
+				let a1 = a.cloneNode();
+				a1.className = "w3-bar-item w3-button addDeviceOnLinkClass";
+				a1.innerHTML = getString(byteArray, pos, 16);
+				comboOn.appendChild(a1);
+				let a2 = a.cloneNode();
+				a2.className = "w3-bar-item w3-button addDeviceToggleLinkClass";
+				a2.innerHTML = getString(byteArray, pos, 16);
+				comboToggle.appendChild(a2);
+				pos += 28;
+				devices.push(a.dataset.deviceName);
+			}
+		}
+		for (let i = 1; i< 50; i++) {
+			copyDiv("par", "template0", i, "template", null, "groupid");
+		}
+		let linksOn = document.querySelectorAll(".addDeviceOnLinkClass");
+		linksOn.forEach(function(link) {
+			link.addEventListener("click", function(){addDevice(event, 2)}, false);
+		});
+		let linksOff = document.querySelectorAll(".addDeviceOffLinkClass");
+		linksOff.forEach(function(link) {
+			link.addEventListener("click", function(){addDevice(event, 1)}, false);
+		});
+		let linksToggle = document.querySelectorAll(".addDeviceToggleLinkClass");
+		linksToggle.forEach(function(link) {
+			link.addEventListener("click", function(){addDevice(event, 3)}, false);
+		});
+		getDevGroupsConfig();
+	}, true);
+}
+function addDevice(event, type) {
+	let targ = event.currentTarget;
+	let deviceId = Number(targ.dataset.device);
+	let groupId = -1; let parent = targ.parentElement.parentElement.parentElement.parentElement;
+	for (let i = 0; i < 5; i++) {
+		if (parent.dataset.groupid) {
+			groupId = Number(parent.dataset.groupid);
+			break;
+		}
+		parent = parent.parentElement;
+	}
+	let group = groups[groupId];
+	let dl = group['deviceList'];
+	for (dev of dl) {
+		if (dev['device'] == deviceId) {
+			var toast = new iqwerty.toast.Toast();
+			toast.setText('Device is already in the group!').show();
+			return false;
+		}
+	}
+	dl.push({device:deviceId, type: type}); // 1 - off, 2 - on, 3 - toggle
+	addDeviceElement(groupId, deviceId, type);
+}
+function addDeviceElement(groupId, deviceId, type) {
+	let elGr = document.querySelector('#template'+groupId);
+	let elDl = elGr.querySelector('.deviceList');
+	let div = document.createElement('div');
+	div.dataset.group = groupId;
+	div.dataset.device = deviceId;
+	let cname = ['', "w3-tag w3-round w3-yellow", "w3-tag w3-round w3-green", "w3-tag w3-round w3-blue"];
+	div.className = cname[type];
+	div.innerHTML = devices[deviceId] + '<span class="material-icons" style="cursor: pointer" onclick="delDevice(event,'+type+')">remove_circle_outline</span>';
+	elDl.appendChild(div);
+}
+function delDevice(event, type) {
+	let targ = event.currentTarget.parentElement;
+	let group = groups[targ.dataset.group];
+	let dl = group['deviceList'];
+	let elGr = document.querySelector('#template'+targ.dataset.group);
+	let elDl = elGr.querySelector('.deviceList');
+	let deviceId = Number(targ.dataset.device);
+	let groupId = Number(targ.dataset.group);
+	for (let i = 0; i < dl.length; i++) {
+		if (dl[i].device == deviceId) {
+			dl.splice(i, 1); // 2nd parameter means remove one item only
+			break;
+		}
+	}
+	targ.parentNode.removeChild(targ);
+	//toast.setText('Error removind!').show();
+}
+function saveDevGroupsConfig() {
+	let byteArray = [];
+	let pos = 4;
+	byteArray[0] = 1;
+	byteArray[1] = byteArray[2] = byteArray[3] = 0;
+    for (let num = 0; num < 50; num++) {
+		// 16 é o tamanho do registro
+    	for (let i=0;i<16;i++) byteArray[pos + i] = 0;
+		fromString(byteArray, pos, 16, gval("name"+num)); pos += 16;
+	}
+	let ind = 0;
+    for (let num = 0; num < 50; num++) {
+		let group = groups[num];
+		let dl = group['deviceList'];
+		dl.forEach(function(dev) {
+			byteArray[pos++] = dev['type'];
+			byteArray[pos++] = dev['device'];
+			byteArray[pos++] = num;
+			byteArray[pos++] = 0;
+			ind++;
+		});
+	}
+	for (let i = ind; i < 500; i++) {
+		byteArray[pos++] = 0;
+		byteArray[pos++] = 0;
+		byteArray[pos++] = 0;
+		byteArray[pos++] = 0;
+	}
+	uploadFileBin(byteArray, "rfgroups.dat", "reloadRfDevicesConfig");
+}
+function getDevGroupsConfig() {
+	call("rfgroups.dat",null,null,null, null, function (arrayBuffer) {
+		let byteArray = new Uint8Array(arrayBuffer);
+		if (byteArray.byteLength < (50 * 16) + (500 * 4) + 4 &&
+			byteArray[0] != 1) {
+			for (let ind = 0; ind < 50; ind++) {
+				groups.push({name:'', deviceList:[]});
+			}
+			return;
+		}
+		let pos = 4;
+		for (let ind = 0; ind < 50; ind++) {
+			if (getString(byteArray, pos, 16).length > 0) {
+				sval("name" + ind, getString(byteArray, pos, 16));
+			} else {
+				sval("name"+ind, "");
+			}
+			groups.push({name:gval("name" + ind), deviceList:[]});
+			pos += 16;
+		}
+		for (let ind = 0; ind < 500; ind++) {
+			let type = byteArray[pos++];
+			let deviceId = byteArray[pos++];
+			let groupId = byteArray[pos++];
+			pos++;
+			if (type != 0) {
+				let group = groups[groupId];
+				let dl = group['deviceList'];
+				dl.push({device:deviceId, type:type});
+				addDeviceElement(groupId, deviceId, type);
+			}
+		}
+	}, true);
+}
+window.onload=function(){
+	getDevConfig();
+};
+</script>
+</body>
+</html> 

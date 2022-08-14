@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<title>My Switch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<body>
+<div class="w3-container w3-blue">
+  <h2 id="nodeName">Config</h2>
+</div>
+  <p>
+	<a href="config.html">config</a>
+	<a href="firmware">firmware</a>
+	<a href="dir">dir</a>
+	<a href="fupload">upload</a>
+	<a href="/reset">reset</a>
+	<a href="/resetwifi">resetwifi</a>
+	<a href="/heap">heap</a>
+	<a href="/rfActuatorsConfig.html">actuators</a>
+	<a href="/rfControlsConfig.html">controls</a>
+  </p>
+<script src="functions.js"></script>
+<script>
+window.onload=function(){
+  getName();
+};
+function getName() {
+	call("config.dat",null,null,null, null, function (arrayBuffer) {
+		let obj = parseConfig(arrayBuffer);
+		if (obj.nodeName.length > 0) {
+			shtml("nodeName",obj.nodeName);
+			document.title = obj.nodeName;
+		}
+	}, true);
+}
+</script>
+</body>
+</html>
