@@ -79,6 +79,19 @@ bool loadFile(const String &path, void * buffer, size_t size) {
 	f1.readBytes((char*)buffer, size);
 	return true;
 }
+bool saveFile(const String &path, void * buffer, size_t size) {
+	File f1 = SPIFFS.open(path, _FILE_WRITE);
+	Serial.print(path);
+	if (!f1) {
+		Serial.println(FPSTR(_FILEOPENFAILED));
+		return false;
+	}
+	uint8_t ver[4];
+	ver[0] = 1; ver[1] = ver[2] = ver[3] = 0;
+	f1.write(ver, 4);
+	f1.write((uint8_t*)buffer, size);
+	return true;
+}
 bool loadConfig() {
 	bool res = true;
 	if (!loadFile(FPSTR(_PASSWORDCONFIGDAT), &configValues, sizeof(ConfigValues))) {
@@ -90,6 +103,9 @@ bool loadConfig() {
 	println(F("Node User name: "), configValues.userName);
 	println(F("Node passwd: "), configValues.passwd);
 	return res;
+}
+bool saveCloudConfig() {
+	return saveFile(FPSTR(_CLOUDDAT), &cloudValues, sizeof(cloudValues));	
 }
 bool loadCloudConfig() {
 	if (!loadFile(FPSTR(_CLOUDDAT), &cloudValues, sizeof(cloudValues))) {

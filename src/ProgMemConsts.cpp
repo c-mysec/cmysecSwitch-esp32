@@ -58,9 +58,8 @@ char _ARG_SENDTOACTUATOR[] PROGMEM = "sendtoactuator";
 
 char _MQTT_RECCONECT_ATTEMPT[] PROGMEM = "Attempting MQTT connection...";
 char _MQTT_FAILED_CONN[] PROGMEM = "failed, rc=";
-char _MQTT_TO_OPEN_CERT[] PROGMEM = "to open cert file";
-char _MQTT_TO_OPEN_KEY[] PROGMEM = "to open private key file";
-char _MQTT_TO_OPEN_CACERT[] PROGMEM = "to open ca file";
+char _FAILED_TO_OPEN[] PROGMEM = "Failed to open ";
+char _SUCCESS_OPEN[] PROGMEM = "Success open ";
 
 char _LOADED[] PROGMEM = "loaded ...";
 char _NOT_LOADED[] PROGMEM = "not loaded ...";

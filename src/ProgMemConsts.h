@@ -52,9 +52,8 @@ extern char _ARG_SENDTOACTUATOR[];
 
 extern char _MQTT_RECCONECT_ATTEMPT[];
 extern char _MQTT_FAILED_CONN[];
-extern char _MQTT_TO_OPEN_CERT[];
-extern char _MQTT_TO_OPEN_KEY[];
-extern char _MQTT_TO_OPEN_CACERT[];
+extern char _FAILED_TO_OPEN[];
+extern char _SUCCESS_OPEN[];
 
 extern char _LOADED[];
 extern char _NOT_LOADED[];

@@ -147,6 +147,7 @@ bool loadAllConfigs();
 bool loadConfig();
 bool loadCloudConfig();
 bool loadButtonActuatorsConfig();
+bool saveCloudConfig();
 
 void log(const __FlashStringHelper* buffer);
 void log(const char * buffer);
