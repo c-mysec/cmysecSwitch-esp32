@@ -147,7 +147,7 @@
           fromString(byteArray, pos, 32, gval("iotPasswd")); pos += 32;
           fromString(byteArray, pos, 128, gval("iotEndpoint")); pos += 128;
           fromString(byteArray, pos, 128, gval("iotOutTopic")); pos += 128;
-          fromString(byteArray, pos, 64, gval("email")); pos += 64;
+          fromString(byteArray, pos, 64, gval("email")); pos += 128;
           uploadFileBin(byteArray, "cloud.dat");
         }
       </script>

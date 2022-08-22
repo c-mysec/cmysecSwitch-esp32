@@ -79,16 +79,22 @@ bool loadFile(const String &path, void * buffer, size_t size) {
 	f1.readBytes((char*)buffer, size);
 	return true;
 }
+void _logln(const __FlashStringHelper* buf, const char * v) {
+	println(buf, v);
+	log(buf);
+	logln(v);
+}
 bool loadConfig() {
 	bool res = true;
+	logln(F("Loading config"));
 	if (!loadFile(FPSTR(_PASSWORDCONFIGDAT), &configValues, sizeof(ConfigValues))) {
 		strcpy(configValues.passwd, "12345678");
 		strcpy(configValues.nodeName, "ESP32");
 		strcpy(configValues.userName, "admin");
 	}
-	println(F("Node name: "), configValues.nodeName);
-	println(F("Node User name: "), configValues.userName);
-	println(F("Node passwd: "), configValues.passwd);
+	_logln(F("Node name: "), configValues.nodeName);
+	_logln(F("Node User name: "), configValues.userName);
+	_logln(F("Node passwd: "), configValues.passwd);
 	return res;
 }
 bool loadCloudConfig() {
@@ -99,15 +105,15 @@ bool loadCloudConfig() {
 		cloudValues.iotOutTopic[0] = 0; // $aws/rules/MySwitchStatusChangeMySwitchStatusChangeIoTRule_uxqN0kOhCUf9
 		cloudValues.email[0] = 0;
 		// this is a slave
-		Serial.println(F("cloud not loaded"));
+		logln(F("cloud not loaded"));
 		return false;
 	}
 	// this is a master
-	println(F("uname: "), cloudValues.userName);
-	println(F("pass: "), cloudValues.passwd);
-	println(F("endpoint: "), cloudValues.endpoint);
-	println(F("iotOutTopic: "), cloudValues.iotOutTopic);
-	println(F("email: "), cloudValues.email);
+	_logln(F("uname: "), cloudValues.userName);
+	_logln(F("pass: "), cloudValues.passwd);
+	_logln(F("endpoint: "), cloudValues.endpoint);
+	_logln(F("iotOutTopic: "), cloudValues.iotOutTopic);
+	_logln(F("email: "), cloudValues.email);
 	return true;
 }
 bool loadButtonActuatorsConfig() {
